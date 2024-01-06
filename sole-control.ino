@@ -27,7 +27,7 @@
 #define PRESS_DURATION_LONG_MS  2000
 
 // ADC is 0-1023 for 10 bits or 0-4095 for 12 bits
-#define SENSOR_PRESS_THRESHOLD   500
+#define SENSOR_PRESS_THRESHOLD   400
 #define SENSOR_RELEASE_THRESHOLD 50
 
 BLEDis ble_dis;
@@ -121,14 +121,17 @@ void loop()
   bool     is_released  = sensor_value < SENSOR_RELEASE_THRESHOLD;
   uint32_t now          = millis();
 
+
   if (debug_mode) {
     Serial.print("[");
     Serial.print(now);
     Serial.print("] ADC: ");
-    Serial.println(sensor_value);
-    Serial.print("Pressed: ");
+    Serial.print(sensor_value);
+    Serial.print(", Was Pressed: ");
+    Serial.print(was_pressed);
+    Serial.print(", Is Pressed: ");
     Serial.print(is_pressed);
-    Serial.print(", Released: ");
+    Serial.print(", Is Released: ");
     Serial.println(is_released);
   }
 
@@ -140,13 +143,17 @@ void loop()
       Serial.print("Sensor press detected @ ts ");
       Serial.println(press_ts);
     }
+
+    was_pressed = TRUE;
   }
 
   // Register key release
   else if (was_pressed && is_released) {
     uint32_t press_duration = millis() - press_ts;
-    Serial.print("Release detected, duration: ");
-    Serial.println(press_duration);
+    if (debug_mode) {
+      Serial.print("Release detected, duration: ");
+      Serial.println(press_duration);
+    }
 
     // Long press goes back
     if (press_duration >= PRESS_DURATION_LONG_MS) {
@@ -156,13 +163,21 @@ void loop()
     else if (press_duration >= PRESS_DURATION_SHORT_MS) {
       pressed_key = ARROW_RIGHT;
     }
+
+    was_pressed = FALSE;
   }
 
   // Handle key press if present
   if (pressed_key) {
       if (debug_mode) {
         Serial.print("Sending key: ");
-        Serial.println(pressed_key);
+
+        if (pressed_key == ARROW_LEFT) {
+          Serial.println("LEFT");
+        }
+        else if (pressed_key == ARROW_RIGHT) {
+          Serial.println("RIGHT");
+        }
       }
 
     ble_hid.keyPress(pressed_key);
@@ -171,9 +186,6 @@ void loop()
     ble_hid.keyRelease();
     delay(KEY_PRESS_DURATION_MS);
   }
-
-  // Update for next iteration
-  was_pressed = is_pressed;
 
   if (debug_mode) {
     delay(100);
