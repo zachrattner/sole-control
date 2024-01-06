@@ -23,7 +23,7 @@
 
 #define KEY_PRESS_DURATION_MS 5
 
-#define PRESS_DURATION_SHORT_MS 1000
+#define PRESS_DURATION_SHORT_MS 500
 #define PRESS_DURATION_LONG_MS  2000
 
 // ADC is 0-1023 for 10 bits or 0-4095 for 12 bits
@@ -36,6 +36,7 @@ BLEHidAdafruit ble_hid;
 bool was_pressed = FALSE;
 uint32_t press_ts;
 bool debug_mode = TRUE;
+bool is_verbose = FALSE;
 
 void setup() 
 {
@@ -121,8 +122,7 @@ void loop()
   bool     is_released  = sensor_value < SENSOR_RELEASE_THRESHOLD;
   uint32_t now          = millis();
 
-
-  if (debug_mode) {
+  if (debug_mode && is_verbose) {
     Serial.print("[");
     Serial.print(now);
     Serial.print("] ADC: ");
