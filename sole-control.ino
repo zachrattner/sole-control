@@ -20,7 +20,6 @@
 #define ARROW_RIGHT 39 // Next ASCII code
 
 #define SENSOR_PIN 2
-#define VCC_PIN    10
 
 #define KEY_PRESS_DURATION_MS 5
 
@@ -41,12 +40,10 @@ bool debug_mode = TRUE;
 void setup() 
 {
   pinMode(SENSOR_PIN, INPUT);
-  pinMode(VCC_PIN, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
   // Start with LED red to indicate initial setup
   digitalWrite(LED_BUILTIN, LED_RED);  
 
-  digitalWrite(VCC_PIN, TRUE);
   Serial.begin(115200);
 
   // Wait for serial port to become active
