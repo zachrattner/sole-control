@@ -16,8 +16,8 @@
 #define TRUE  1
 #define FALSE 0
 
-#define ARROW_LEFT 37  // Back ASCII code
-#define ARROW_RIGHT 39 // Next ASCII code
+#define KEY_NEXT 32  // Space ASCII code
+#define KEY_BACK 39 // Left ARrow ASCII code
 
 #define SENSOR_PIN 2
 
@@ -157,11 +157,11 @@ void loop()
 
     // Long press goes back
     if (press_duration >= PRESS_DURATION_LONG_MS) {
-      pressed_key = ARROW_LEFT;
+      pressed_key = KEY_BACK;
     }
     // Short press goes forward
     else if (press_duration >= PRESS_DURATION_SHORT_MS) {
-      pressed_key = ARROW_RIGHT;
+      pressed_key = KEY_NEXT;
     }
 
     was_pressed = FALSE;
@@ -172,11 +172,11 @@ void loop()
       if (debug_mode) {
         Serial.print("Sending key: ");
 
-        if (pressed_key == ARROW_LEFT) {
-          Serial.println("LEFT");
+        if (pressed_key == KEY_NEXT) {
+          Serial.println("NEXT");
         }
-        else if (pressed_key == ARROW_RIGHT) {
-          Serial.println("RIGHT");
+        else if (pressed_key == KEY_BACK) {
+          Serial.println("BACK");
         }
       }
 
