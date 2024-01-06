@@ -19,7 +19,8 @@
 #define ARROW_LEFT 37  // Back ASCII code
 #define ARROW_RIGHT 39 // Next ASCII code
 
-#define SENSOR_PIN 0
+#define SENSOR_PIN 2
+#define VCC_PIN    10
 
 #define KEY_PRESS_DURATION_MS 5
 
@@ -27,18 +28,25 @@
 #define PRESS_DURATION_LONG_MS  2000
 
 // ADC is 0-1023 for 10 bits or 0-4095 for 12 bits
-#define SENSOR_PRESS_THRESHOLD   1000
-#define SENSOR_RELEASE_THRESHOLD 100
+#define SENSOR_PRESS_THRESHOLD   500
+#define SENSOR_RELEASE_THRESHOLD 50
 
 BLEDis ble_dis;
 BLEHidAdafruit ble_hid;
 
+bool was_pressed = FALSE;
+uint32_t press_ts;
+bool debug_mode = TRUE;
+
 void setup() 
 {
+  pinMode(SENSOR_PIN, INPUT);
+  pinMode(VCC_PIN, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
   // Start with LED red to indicate initial setup
   digitalWrite(LED_BUILTIN, LED_RED);  
 
+  digitalWrite(VCC_PIN, TRUE);
   Serial.begin(115200);
 
   // Wait for serial port to become active
@@ -46,16 +54,7 @@ void setup()
     delay(10); // for nrf52840 with native usb
   }
 
-  Serial.println("SoleControl Debug Console");
-  Serial.println("--------------------------------\n");
-
-  Serial.println();
-  Serial.println("Go to your device's's Bluetooth settings to pair your device");
-  Serial.println("then open an application that accepts keyboard input");
-
-  Serial.println();
-  Serial.println("Enter the character(s) to send:");
-  Serial.println();  
+  Serial.println("SoleControl booting up");
 
   Bluefruit.begin();
   Bluefruit.setTxPower(8); // Check bluefruit.h for supported values
@@ -85,6 +84,8 @@ void setup()
 
   // Change LED to blue to indicate normal operation
   digitalWrite(LED_BUILTIN, LED_BLUE);  
+
+  Serial.println("SoleControl running...");
 }
 
 void startAdv(void)
@@ -115,23 +116,40 @@ void startAdv(void)
   Bluefruit.Advertising.start(0);                // 0 = Don't stop advertising after n seconds
 }
 
-bool was_pressed = FALSE;
-uint32_t press_ts;
-
 void loop() 
-{
+{  
   char     pressed_key  = 0;
   uint32_t sensor_value = analogRead(SENSOR_PIN);
   bool     is_pressed   = sensor_value >= SENSOR_PRESS_THRESHOLD;
   bool     is_released  = sensor_value < SENSOR_RELEASE_THRESHOLD;
+  uint32_t now          = millis();
+
+  if (debug_mode) {
+    Serial.print("[");
+    Serial.print(now);
+    Serial.print("] ADC: ");
+    Serial.println(sensor_value);
+    Serial.print("Pressed: ");
+    Serial.print(is_pressed);
+    Serial.print(", Released: ");
+    Serial.println(is_released);
+  }
 
   // Log start time if the sensor got pressed
   if (!was_pressed && is_pressed) {
-    press_ts = millis();
+    press_ts = now;
+
+    if (debug_mode) {
+      Serial.print("Sensor press detected @ ts ");
+      Serial.println(press_ts);
+    }
   }
+
   // Register key release
   else if (was_pressed && is_released) {
     uint32_t press_duration = millis() - press_ts;
+    Serial.print("Release detected, duration: ");
+    Serial.println(press_duration);
 
     // Long press goes back
     if (press_duration >= PRESS_DURATION_LONG_MS) {
@@ -145,6 +163,11 @@ void loop()
 
   // Handle key press if present
   if (pressed_key) {
+      if (debug_mode) {
+        Serial.print("Sending key: ");
+        Serial.println(pressed_key);
+      }
+
     ble_hid.keyPress(pressed_key);
     delay(KEY_PRESS_DURATION_MS);
 
@@ -155,6 +178,11 @@ void loop()
   // Update for next iteration
   was_pressed = is_pressed;
 
-  delay(10);
+  if (debug_mode) {
+    delay(100);
+  }
+  else {
+    delay(10);
+  }
 }
 
