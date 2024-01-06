@@ -16,8 +16,10 @@
 #define TRUE  1
 #define FALSE 0
 
-#define KEY_NEXT 32  // Space ASCII code
-#define KEY_BACK 39 // Left ARrow ASCII code
+// HID key code: 
+// https://gist.github.com/MightyPork/6da26e382a7ad91b5496ee55fdc73db2
+#define KEY_NEXT 32   // Space Key
+#define KEY_BACK 0x50 // Left Arrow
 
 #define SENSOR_PIN 2
 
@@ -35,7 +37,7 @@ BLEHidAdafruit ble_hid;
 
 bool was_pressed = FALSE;
 uint32_t press_ts;
-bool debug_mode = TRUE;
+bool debug_mode = FALSE;
 bool is_verbose = FALSE;
 
 void setup() 
@@ -187,11 +189,6 @@ void loop()
     delay(KEY_PRESS_DURATION_MS);
   }
 
-  if (debug_mode) {
-    delay(100);
-  }
-  else {
-    delay(10);
-  }
+  delay(100);
 }
 
