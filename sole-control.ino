@@ -11,43 +11,61 @@
  All text above, and the splash screen below must be included in
  any redistribution
 *********************************************************************/
+
+/**
+ * This project has been modified from the following example:
+ * https://github.com/adafruit/Adafruit_nRF52_Arduino/blob/master/libraries/Bluefruit52Lib/examples/Peripheral/blehid_keyboard/blehid_keyboard.ino
+ */
+
 #include <bluefruit.h>
 
 #define TRUE  1
 #define FALSE 0
 
-// HID key code: 
-// https://gist.github.com/MightyPork/6da26e382a7ad91b5496ee55fdc73db2
-#define KEY_NEXT 32   // Space Key
-#define KEY_BACK 0x50 // Left Arrow
+/** 
+ * HID key code: 
+ * https://gist.github.com/MightyPork/6da26e382a7ad91b5496ee55fdc73db2
+ */
+// Space Key
+#define KEY_NEXT 32  
 
+ // Left Arrow
+#define KEY_BACK 0x50
+
+/**
+ * Pin number the voltage divider network is connected to
+ * Note that this must be an analog pin.
+ */
 #define SENSOR_PIN 2
 
+// Key press duration when sending key press signal over the Bluteooth interface
 #define KEY_PRESS_DURATION_MS 5
 
+// Sensor durations (in ms) for a short (next) and long (back) key press
 #define PRESS_DURATION_SHORT_MS 500
 #define PRESS_DURATION_LONG_MS  2000
 
-// ADC is 0-1023 for 10 bits or 0-4095 for 12 bits
-#define SENSOR_PRESS_THRESHOLD   400
-#define SENSOR_RELEASE_THRESHOLD 50
+// ADC readings run from  0 (0 V) to 1023 (3.3 V) 
+#define SENSOR_PRESS_THRESHOLD   400 
+#define SENSOR_RELEASE_THRESHOLD 50  
 
-BLEDis ble_dis;
-BLEHidAdafruit ble_hid;
+#define SERIAL_BAUD_RATE 115200
 
-bool was_pressed = FALSE;
-uint32_t press_ts;
-bool debug_mode = FALSE;
-bool is_verbose = FALSE;
+// Pause between main loop iterations
+#define LOOP_DELAY_MS 100
 
-void setup() 
-{
+BLEDis         ble_dis;       // Bluetooth Device Information Service helper
+BLEHidAdafruit ble_hid;       // Bluetooth Human Interface Device (HID) helper
+
+bool     was_pressed = FALSE; // Bookkeeping variable to track rising/falling edge transitions
+uint32_t press_ts    = 0;     // Timestamp of the last press
+bool     debug_mode = TRUE;   // Whether to print debug lines over serial
+bool     is_verbose = FALSE;  // Applies only in debug mode, prints every ADC reading
+
+void setup() {
   pinMode(SENSOR_PIN, INPUT);
-  pinMode(LED_BUILTIN, OUTPUT);
-  // Start with LED red to indicate initial setup
-  digitalWrite(LED_BUILTIN, LED_RED);  
-
-  Serial.begin(115200);
+  
+  Serial.begin(SERIAL_BAUD_RATE);
 
   // Wait for serial port to become active
   while (!Serial) { 
@@ -82,14 +100,10 @@ void setup()
   // Set up and start advertising
   startAdv();
 
-  // Change LED to blue to indicate normal operation
-  digitalWrite(LED_BUILTIN, LED_BLUE);  
-
   Serial.println("SoleControl running...");
 }
 
-void startAdv(void)
-{  
+void startAdv(void) {  
   // Advertising packet
   Bluefruit.Advertising.addFlags(BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE);
   Bluefruit.Advertising.addTxPower();
@@ -116,8 +130,7 @@ void startAdv(void)
   Bluefruit.Advertising.start(0);                // 0 = Don't stop advertising after n seconds
 }
 
-void loop() 
-{  
+void loop() {  
   char     pressed_key  = 0;
   uint32_t sensor_value = analogRead(SENSOR_PIN);
   bool     is_pressed   = sensor_value >= SENSOR_PRESS_THRESHOLD;
@@ -148,7 +161,6 @@ void loop()
 
     was_pressed = TRUE;
   }
-
   // Register key release
   else if (was_pressed && is_released) {
     uint32_t press_duration = millis() - press_ts;
@@ -189,6 +201,6 @@ void loop()
     delay(KEY_PRESS_DURATION_MS);
   }
 
-  delay(100);
+  delay(LOOP_DELAY_MS);
 }
 
