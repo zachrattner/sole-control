@@ -1,6 +1,6 @@
 # SoleControl: A presentation remote that minimizes distractions
 
-[![SoleControl: A presentation remote that minimizes distractions](https://img.youtube.com/vi/gbhyXq6yPUE/0.jpg)](https://youtu.be/gbhyXq6yPUE)
+[![SoleControl: A presentation remote that minimizes distractions](readme-assets/cover-image.jpg)](https://youtu.be/DpOcqVNHGnc)
 
 Every have to give a presentation in front of an audience? How do you keep your slides progressing? You could awkwardly call out "Next!" to a friend in the audience who is by the presenting computer, but most people just use wireless presenter remotes.
 
