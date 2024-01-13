@@ -1,12 +1,12 @@
-# SoleControl: A presentation remote that minimizes distractions
+# Toemote: A presentation remote that minimizes distractions
 
-[![SoleControl: A presentation remote that minimizes distractions](readme-assets/cover-image.jpg)](https://youtu.be/DpOcqVNHGnc)
+[![Toemote: A presentation remote that minimizes distractions](readme-assets/cover-image.jpg)](https://youtu.be/DpOcqVNHGnc)
 
 Every have to give a presentation in front of an audience? How do you keep your slides progressing? You could awkwardly call out "Next!" to a friend in the audience who is by the presenting computer, but most people just use wireless presenter remotes.
 
 These remotes are effective, and some even come with cool built-in laser pointers (which is great if you have a cat), but these remotes stand between you and your audience and present a visual distraction. 
 
-SoleControl is a project that allows you to free your hands and engage your audience - by placing the presentation remote under your foot!
+Toemote is a project that allows you to free your hands and engage your audience - by placing the presentation remote under your foot!
 
 By placing a force sensor under the big toe, you can be completely free to move around the stage and present to your audience unencumbered by distractions. 
 
@@ -44,7 +44,7 @@ These items were not part of the actual Bill of Materials, but were helpful in a
 
 ## Schematic
 *Note: The board in the schematic below is not an exact image of the SparkFun Pro nRF52840 Mini. Make sure you connect the pin numbers as listed in the diagram*  
-![SoleControl Schematic](readme-assets/schematic.png)
+![Toemote Schematic](readme-assets/schematic.png)
 
 ## Setup instructions
 

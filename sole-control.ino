@@ -72,14 +72,14 @@ void setup() {
     delay(10); // for nrf52840 with native usb
   }
 
-  Serial.println("SoleControl booting up");
+  Serial.println("Toemote booting up");
 
   Bluefruit.begin();
   Bluefruit.setTxPower(8); // Check bluefruit.h for supported values
 
   // Configure and Start Device Information Service
   ble_dis.setManufacturer("Worthwhile Adventures LLC");
-  ble_dis.setModel("SoleControl");
+  ble_dis.setModel("Toemote");
   ble_dis.begin();
 
   /* Start BLE HID
@@ -100,7 +100,7 @@ void setup() {
   // Set up and start advertising
   startAdv();
 
-  Serial.println("SoleControl running...");
+  Serial.println("Toemote running...");
 }
 
 void startAdv(void) {  
